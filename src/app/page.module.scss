@@ -1,19 +1,24 @@
+
 .wizardContainer {
   background-color: #ffffff;
   width: 100%;
-  max-width: 480px; /* Tamanho ideal para formulários, não fica esticado no desktop */
+  
+  max-width: 640px; 
+  
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   
-  /* Mobile-first: ajusta o padding em telas muito pequenas */
+  margin: 0 auto; 
+
   @media (max-width: 480px) {
     padding: 1.5rem;
     border-radius: 0;
-    min-height: 100vh; /* Ocupa a tela toda no celular */
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
     justify-content: center;
+    max-width: 100%; 
   }
 
   h1 {
@@ -26,5 +31,24 @@
     color: #718096;
     margin-bottom: 2rem;
     font-size: 0.875rem;
+  }
+}
+
+.inputGroup {
+  display: grid;
+  grid-template-columns: 1fr; 
+  gap: 0 1rem; 
+  width: 100%;
+
+  @media (min-width: 480px) {
+    row-gap: 0; 
+
+    &.rowStreet {
+      grid-template-columns: 3fr 1fr;
+    }
+    
+    &.rowCity {
+      grid-template-columns: 2fr 2fr 1fr;
+    }
   }
 }
