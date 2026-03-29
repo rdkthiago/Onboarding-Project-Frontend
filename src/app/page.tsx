@@ -180,153 +180,181 @@ export default function Home() {
 
   const onSubmitAddress = async (data: AddressFormData) => {
     setUserData((prev) => ({ ...prev, address: data }));
-    setCurrentStep('REVIEW');
+    setCurrentStep("REVIEW");
   };
 
   const onFinalSubmit = async () => {
     if (!registrationId || !userData.address) return;
-    setIsLoading(true); setGlobalError(null);
+    setIsLoading(true);
+    setGlobalError(null);
     try {
       await api.updateAddress(registrationId, {
         zipCode: userData.address.zipCode,
         number: userData.address.number,
         complement: userData.address.complement,
       });
-      setCurrentStep('SUCCESS'); 
-    } catch (error: unknown) { 
+      setCurrentStep("SUCCESS");
+    } catch (error: unknown) {
       if (error instanceof Error) setGlobalError(error.message);
       else setGlobalError("Ocorreu um erro desconhecido.");
-    } finally { 
-      setIsLoading(false); 
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <main className={styles.wizardContainer}>
-      
       {currentStep === "IDENTIFICATION" && (
         <form onSubmit={handleIdSubmit(onSubmitIdentification)}>
-          {" "}
-          <h1>Bem-vindo!</h1> <p>Vamos iniciar o seu cadastro.</p>{" "}
+          <h1>Bem-vindo!</h1> <p>Vamos iniciar o seu cadastro.</p>
           <Input
             label="Nome Completo"
             placeholder="Digite seu nome"
             {...registerId("name", { required: "O nome é obrigatório" })}
             error={idErrors.name?.message}
-          />{" "}
+          />
           <Input
             label="E-mail"
             type="email"
             placeholder="seu@email.com"
             {...registerId("email", { required: "O e-mail é obrigatório" })}
             error={idErrors.email?.message}
-          />{" "}
+          />
           {globalError && (
             <span
               style={{ color: "red", display: "block", marginBottom: "1rem" }}
             >
               {globalError}
             </span>
-          )}{" "}
+          )}
           <Button type="submit" isLoading={isLoading}>
             Começar
-          </Button>{" "}
+          </Button>
         </form>
       )}
 
       {currentStep === "MFA" && (
         <form onSubmit={handleMfaSubmit(onSubmitMfa)}>
-          {" "}
-          <h1>Bem-vindo de volta!</h1>{" "}
+          <h1>Bem-vindo de volta!</h1>
           <p>
             Vimos que você já tinha começado. Enviamos um código para{" "}
             <b>{userEmail}</b>.
-          </p>{" "}
+          </p>
           <Input
             label="Código"
             placeholder="000000"
             maxLength={6}
             {...registerMfa("code", { required: "Obrigatório" })}
             error={mfaErrors.code?.message}
-          />{" "}
+          />
           {globalError && (
             <span
               style={{ color: "red", display: "block", marginBottom: "1rem" }}
             >
               {globalError}
             </span>
-          )}{" "}
+          )}
           <Button type="submit" isLoading={isLoading}>
             Validar Código
-          </Button>{" "}
+          </Button>
+          <button
+            type="button"
+            onClick={() => setCurrentStep("IDENTIFICATION")}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#64748b",
+              cursor: "pointer",
+              textDecoration: "underline",
+              marginTop: "1rem",
+              width: "100%",
+            }}
+          >
+            ← Usar outro e-mail
+          </button>
         </form>
       )}
 
       {currentStep === "DOCUMENT" && (
         <form onSubmit={handleDocSubmit(onSubmitDocument)}>
-          {" "}
-          <h1>Seu Documento</h1> <p>Precisamos do seu CPF ou CNPJ.</p>{" "}
+          <h1>Seu Documento</h1> <p>Precisamos do seu CPF ou CNPJ.</p>
           <Input
             label="CPF ou CNPJ"
             placeholder="000.000.000-00"
             type="tel"
+            defaultValue={userData.document} // NOVO: Mantém o dado se ele voltar
             {...registerDoc("document", {
               required: "Obrigatório",
               onChange: (e) =>
                 setDocValue("document", formatDocument(e.target.value)),
             })}
             error={docErrors.document?.message}
-          />{" "}
+          />
           {globalError && (
             <span
               style={{ color: "red", display: "block", marginBottom: "1rem" }}
             >
               {globalError}
             </span>
-          )}{" "}
+          )}
           <Button type="submit" isLoading={isLoading}>
             Continuar
-          </Button>{" "}
+          </Button>
         </form>
       )}
 
       {currentStep === "CONTACT" && (
         <form onSubmit={handleContactSubmit(onSubmitContact)}>
-          {" "}
-          <h1>Seu Contato</h1> <p>Qual o seu melhor número de celular?</p>{" "}
+          <h1>Seu Contato</h1> <p>Qual o seu melhor número de celular?</p>
           <Input
             label="Celular"
             placeholder="(00) 00000-0000"
             type="tel"
+            defaultValue={userData.phone} // NOVO: Mantém o dado
             {...registerContact("phone", {
               required: "Obrigatório",
               onChange: (e) =>
                 setContactValue("phone", formatPhone(e.target.value)),
             })}
             error={contactErrors.phone?.message}
-          />{" "}
+          />
           {globalError && (
             <span
               style={{ color: "red", display: "block", marginBottom: "1rem" }}
             >
               {globalError}
             </span>
-          )}{" "}
+          )}
           <Button type="submit" isLoading={isLoading}>
             Continuar
-          </Button>{" "}
+          </Button>
+          {/* NOVO: Botão de voltar */}
+          <button
+            type="button"
+            onClick={() => setCurrentStep("DOCUMENT")}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#64748b",
+              cursor: "pointer",
+              textDecoration: "underline",
+              marginTop: "1rem",
+              width: "100%",
+            }}
+          >
+            ← Voltar para Documento
+          </button>
         </form>
       )}
 
       {currentStep === "ADDRESS" && (
         <form onSubmit={handleAddressSubmit(onSubmitAddress)}>
-          <h1>Endereço</h1>
-          <p>Para onde enviaremos as novidades?</p>
-
+          <h1>Endereço</h1> <p>Para onde enviaremos as novidades?</p>
           <Input
             label="CEP"
             placeholder="00000-000"
             type="tel"
+            defaultValue={userData.address?.zipCode}
             {...registerAddress("zipCode", {
               required: "O CEP é obrigatório",
               onChange: (e) =>
@@ -335,40 +363,130 @@ export default function Home() {
             })}
             error={addressErrors.zipCode?.message}
           />
-
           <div className={`${styles.inputGroup} ${styles.rowStreet}`}>
             <div>
-              <Input label="Rua" readOnly {...registerAddress("street")} />
+              <Input
+                label="Rua"
+                readOnly
+                defaultValue={userData.address?.street}
+                {...registerAddress("street")}
+              />
             </div>
             <div>
               <Input
                 label="Número"
+                defaultValue={userData.address?.number}
                 {...registerAddress("number", { required: "Obrigatório" })}
                 error={addressErrors.number?.message}
               />
             </div>
           </div>
-
           <Input
             label="Complemento (Opcional)"
             placeholder="Apto 123, Bloco B..."
+            defaultValue={userData.address?.complement}
             {...registerAddress("complement")}
           />
-
           <div className={`${styles.inputGroup} ${styles.rowCity}`}>
             <div>
               <Input
                 label="Bairro"
                 readOnly
+                defaultValue={userData.address?.neighborhood}
                 {...registerAddress("neighborhood")}
               />
             </div>
             <div>
-              <Input label="Cidade" readOnly {...registerAddress("city")} />
+              <Input
+                label="Cidade"
+                readOnly
+                defaultValue={userData.address?.city}
+                {...registerAddress("city")}
+              />
             </div>
             <div>
-              <Input label="UF" readOnly {...registerAddress("state")} />
+              <Input
+                label="UF"
+                readOnly
+                defaultValue={userData.address?.state}
+                {...registerAddress("state")}
+              />
             </div>
+          </div>
+          {globalError && (
+            <span
+              style={{ color: "red", display: "block", marginBottom: "1rem" }}
+            >
+              {globalError}
+            </span>
+          )}
+          <Button type="submit" isLoading={isLoading}>
+            Revisar Dados
+          </Button>
+          <button
+            type="button"
+            onClick={() => setCurrentStep("CONTACT")}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#64748b",
+              cursor: "pointer",
+              textDecoration: "underline",
+              marginTop: "1rem",
+              width: "100%",
+            }}
+          >
+            ← Voltar para Contato
+          </button>
+        </form>
+      )}
+
+      {currentStep === "REVIEW" && (
+        <div>
+          <h1>Revisão e Conclusão</h1>
+          <p>
+            Verifique se todos os seus dados estão corretos antes de finalizar.
+          </p>
+
+          <div
+            style={{
+              backgroundColor: "#f7fafc",
+              padding: "1rem",
+              borderRadius: "8px",
+              marginBottom: "1.5rem",
+              fontSize: "0.875rem",
+            }}
+          >
+            <p>
+              <strong>Nome:</strong> {userData.name}
+            </p>
+            <p>
+              <strong>E-mail:</strong> {userData.email}
+            </p>
+            <p>
+              <strong>Documento:</strong> {userData.document}
+            </p>
+            <p>
+              <strong>Celular:</strong> {userData.phone}
+            </p>
+            <hr style={{ margin: "1rem 0", borderColor: "#e2e8f0" }} />
+            <p>
+              <strong>Endereço:</strong> {userData.address?.street},{" "}
+              {userData.address?.number}{" "}
+              {userData.address?.complement
+                ? `- ${userData.address.complement}`
+                : ""}
+            </p>
+            <p>
+              <strong>Bairro:</strong> {userData.address?.neighborhood}
+            </p>
+            <p>
+              <strong>Cidade/UF:</strong> {userData.address?.city} /{" "}
+              {userData.address?.state}
+            </p>
+            <p>
+              <strong>CEP:</strong> {userData.address?.zipCode}
+            </p>
           </div>
 
           {globalError && (
@@ -378,33 +496,26 @@ export default function Home() {
               {globalError}
             </span>
           )}
-          <Button type="submit" isLoading={isLoading}>
-            Concluir Cadastro
-          </Button>
-        </form>
-      )}
-
-      {currentStep === "REVIEW" && (
-        <div>
-          <h1>Revisão e Conclusão</h1>
-          <p>Verifique se todos os seus dados estão corretos antes de finalizar.</p>
-          
-          <div style={{ backgroundColor: "#f7fafc", padding: "1rem", borderRadius: "8px", marginBottom: "1.5rem", fontSize: "0.875rem" }}>
-            <p><strong>Nome:</strong> {userData.name}</p>
-            <p><strong>E-mail:</strong> {userData.email}</p>
-            <p><strong>Documento:</strong> {userData.document}</p>
-            <p><strong>Celular:</strong> {userData.phone}</p>
-            <hr style={{ margin: "1rem 0", borderColor: "#e2e8f0" }} />
-            <p><strong>Endereço:</strong> {userData.address?.street}, {userData.address?.number} {userData.address?.complement ? `- ${userData.address.complement}` : ""}</p>
-            <p><strong>Bairro:</strong> {userData.address?.neighborhood}</p>
-            <p><strong>Cidade/UF:</strong> {userData.address?.city} / {userData.address?.state}</p>
-            <p><strong>CEP:</strong> {userData.address?.zipCode}</p>
-          </div>
-
-          {globalError && <span style={{ color: "red", display: "block", marginBottom: "1rem" }}>{globalError}</span>}
           <Button onClick={onFinalSubmit} isLoading={isLoading}>
             Concluir Cadastro
           </Button>
+
+          {/* NOVO: Botão de voltar na tela de revisão */}
+          <button
+            type="button"
+            onClick={() => setCurrentStep("ADDRESS")}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#64748b",
+              cursor: "pointer",
+              textDecoration: "underline",
+              marginTop: "1rem",
+              width: "100%",
+            }}
+          >
+            ← Editar Endereço
+          </button>
         </div>
       )}
 
