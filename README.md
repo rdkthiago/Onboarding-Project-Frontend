@@ -43,9 +43,9 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 **4. Rode o servidor de desenvolvimento**
 npm run dev
 
-A aplicação estará disponível no seu navegador em: 👉 **[http://localhost:3001](http://localhost:3001)** *(ou 3000, caso a porta esteja livre)*.
+A aplicação estará disponível no seu navegador em: **[http://localhost:3001](http://localhost:3001)** *(ou 3000, caso a porta esteja livre)*.
 
-## 🐳 Como Executar via Docker (Produção)
+## Como Executar via Docker (Produção)
 
 O projeto possui um `Dockerfile` otimizado (baseado em Alpine) preparado para compilar o Next.js para produção.
 
@@ -55,7 +55,7 @@ docker build -t onboarding-frontend .
 # Rodar o container expondo a porta 3000
 docker run -p 3000:3000 onboarding-frontend
 
-## 🧪 Qualidade de Código (Linter)
+## Qualidade de Código (Linter)
 
 O projeto segue as regras estritas de linting do Next.js e TypeScript. Para rodar a verificação de padronização automática e indentação exigida no teste, execute:
 
